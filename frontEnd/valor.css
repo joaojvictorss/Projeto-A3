@@ -1,0 +1,102 @@
+.pix-modal {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.10);
+    max-width: 340px;
+    margin: 60px auto 0 auto;
+    padding: 32px 24px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.pix-modal h2 {
+    color: #222;
+    font-size: 1.32rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+    text-align: left;
+}
+
+.pix-divider {
+    border: none;
+    border-top: 1px solid #eee;
+    margin-bottom: 22px;
+}
+
+.pix-label {
+    color: #444;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.pix-input-group {
+    display: flex;
+    align-items: center;
+    background: #fafafa;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 0 10px;
+    margin-bottom: 28px;
+    height: 48px;
+}
+
+.pix-cifrao {
+    color: #888;
+    font-size: 1.1rem;
+    margin-right: 6px;
+    font-weight: 600;
+}
+
+.pix-input {
+    border: none;
+    background: transparent;
+    font-size: 1.25rem;
+    color: #222;
+    outline: none;
+    width: 100%;
+    padding: 10px 0;
+}
+
+.pix-btns {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.pix-btn-cancelar {
+    flex: 1;
+    background: #fff;
+    color: #e70033;
+    border: 1.5px solid #e70033;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+}
+
+.pix-btn-cancelar:hover {
+    background: #f7f7f7;
+}
+
+.pix-btn-continuar {
+    flex: 1;
+    background: #e70033;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+
+.pix-btn-continuar:hover {
+    background: #b80027;
+}

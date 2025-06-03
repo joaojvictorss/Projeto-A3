@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Área Pix - Bradesco</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-top">
+                <span class="logo">Bradesco</span>
+                <div class="header-icons">
+                    <span class="icon-bell">
+                        <span class="badge">23</span>
+                        <img src="https://img.icons8.com/sf-regular/48/ffffff/appointment-reminders.png"
+                            alt="Notificações" />
+                    </span>
+                </div>
+            </div>
+            <div class="header-user">
+                <span id="user-nome">Olá, Usuário</span>
+                <span class="logout">Sair</span>
+            </div>
+            <div class="saldo-area">
+                <button id="btn-saldo" class="saldo-btn">
+                    Meu saldo
+                    <img src="https://img.icons8.com/ios-filled/18/ffffff/visible--v1.png" id="img-eye" class="eye"
+                        alt="Exibir/ocultar saldo" />
+                </button>
+                <div class="saldo-valor" id="saldo-valor"></div>
+            </div>
+        </header>
+
+        <main>
+            <section class="pix-area">
+                <h2>Área Pix</h2>
+                <div class="pix-grid">
+                    <div class="pix-item" id="pix-transferir">
+                        <img src="https://img.icons8.com/ios-filled/50/e70033/money-transfer.png" alt="Transferir Pix" />
+                        <span>Transferir</span>
+                    </div>
+                    <div class="pix-item">
+                        <img src="https://img.icons8.com/ios-filled/50/e70033/request-money.png" alt="Receber Pix" />
+                        <span>Receber</span>
+                    </div>
+                    <div class="pix-item">
+                        <img src="https://img.icons8.com/ios-filled/50/e70033/qr-code.png" alt="Pagar com QR Code" />
+                        <span>Pagar com QR Code</span>
+                    </div>
+                    <div class="pix-item">
+                        <img src="https://img.icons8.com/ios-filled/50/e70033/key.png" alt="Minhas Chaves" />
+                        <span>Minhas Chaves</span>
+                    </div>
+                    <div class="pix-item">
+                        <img src="https://img.icons8.com/ios-filled/50/e70033/clock--v1.png" alt="Extrato" />
+                        <span>Extrato</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <div class="footer-menu">
+                <div class="footer-item">
+                    <a href="home.html">
+                        <img src="https://img.icons8.com/ios-filled/24/e70033/home.png" alt="Home" />
+                        <span>Home</span>
+                    </a>
+                </div>
+                <div class="footer-item">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/robot-3.png" alt="BIA" />
+                    <span>BIA</span>
+                </div>
+                <div class="footer-item">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/shop.png" alt="Shop" />
+                    <span>Shop</span>
+                </div>
+                <div class="footer-item">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/user-male-circle.png" alt="Perfil" />
+                    <span>Perfil</span>
+                </div>
+                <div class="footer-item active">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/menu.png" alt="Menu" />
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+    <script>
+      // Exibe nome e saldo do usuário logado
+      (function() {
+        const userData = localStorage.getItem('usuarioLogado');
+        let nome = 'Usuário';
+        let saldo = '';
+        if (userData) {
+          try {
+            const user = JSON.parse(userData);
+            nome = user.nome || nome;
+            saldo = typeof user.saldo === 'number'
+              ? user.saldo
+              : (parseFloat(user.saldo) || '');
+          } catch {}
+        }
+        document.getElementById('user-nome').textContent = 'Olá, ' + nome;
+        const saldoEl = document.getElementById('saldo-valor');
+        if (saldoEl) {
+          saldoEl.textContent = saldo !== '' ? 
+            'R$ ' + Number(saldo).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
+        }
+      })();
+    </script>
+</body>
+
+</html>

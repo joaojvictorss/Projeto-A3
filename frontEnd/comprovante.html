@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comprovante Pix</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    .app {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #fff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      border-radius: 0;
+    }
+
+    .header {
+      background-color: #e70033;
+      /* alterado para cor padrão */
+      color: white;
+      padding: 16px;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .content {
+      padding: 20px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    h2 {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .info-group {
+      margin-bottom: 20px;
+    }
+
+    .label {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .value {
+      font-size: 15px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .highlight {
+      color: #e70033;
+      /* alterado para cor padrão */
+      font-size: 13px;
+      font-weight: bold;
+      float: right;
+      cursor: pointer;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 20px 0;
+    }
+
+    .footer {
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #eee;
+      background-color: #fafafa;
+    }
+
+    .btn {
+      background-color: #e70033;
+      /* alterado para cor padrão */
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      flex: 1;
+      margin: 0 5px;
+    }
+
+    .btn:hover {
+      background-color: #b80027;
+      /* hover igual ao das outras telas */
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+    <div class="header">Pix</div>
+
+    <div class="content">
+      <h2>Dados do pagamento</h2>
+
+      <div class="info-group">
+        <div class="label">Valor</div>
+        <div class="value" id="valor-pix">
+          <!-- Valor será preenchido via JS -->
+        </div>
+      </div>
+
+      <div class="label">Data e hora</div>
+      <div class="value" id="data-hora-pix"></div>
+
+      <div class="label">Chave Pix destino</div>
+      <div class="value" id="chave-pix"></div>
+
+      <hr />
+
+      <div class="info-group">
+        <div class="label">DADOS DE QUEM ENVIOU</div>
+
+        <div class="label">Nome</div>
+        <div class="value" id="nome-remetente"></div>
+
+        <div class="label">Instituição</div>
+        <div class="value" id="banco-remetente"></div>
+      </div>
+
+      <div class="info-group">
+        <div class="label">DADOS DE QUEM RECEBEU</div>
+
+        <div class="label">Nome</div>
+        <div class="value" id="nome-recebedor"></div>
+
+        <div class="label">Instituição</div>
+        <div class="value" id="banco-recebedor"></div>
+
+        <div class="label">Chave</div>
+        <div class="value" id="chave-recebedor"></div>
+      </div>
+    </div>
+
+    <!-- Botões de Ação -->
+    <div class="footer">
+      <button class="btn" onclick="voltar()">Voltar</button>
+      <button class="btn" onclick="compartilhar()">Compartilhar</button>
+    </div>
+  </div>
+
+  <script>
+    // Função para preencher os dados do comprovante dinamicamente
+    async function preencherComprovante() {
+      // Dados do remetente (quem fez o Pix)
+      const usuario = JSON.parse(localStorage.getItem('usuarioLogado') || '{}');
+      const nomeRemetente = usuario.nome || '---';
+      const bancoRemetente = 'Banco Bradesco';
+
+      // Dados da transação
+      const valor = localStorage.getItem('valorPix') || '0.00';
+      const dataHora = localStorage.getItem('dataHoraPix') || new Date().toLocaleString('pt-BR');
+      const chavePix = localStorage.getItem('chavePix') || '---';
+
+      // Buscar nome do recebedor pelo backend usando a chave Pix
+      let nomeRecebedor = '---';
+      let bancoRecebedor = 'Banco Bradesco';
+      if (chavePix && chavePix !== '---') {
+        try {
+          const resp = await fetch(`http://localhost:8080/pix/conta/por-chave?chave=${encodeURIComponent(chavePix)}`);
+          if (resp.ok) {
+            const conta = await resp.json();
+            nomeRecebedor = conta.usuario?.nome || '---';
+            // Se quiser buscar o banco do recebedor de outro campo, ajuste aqui
+          }
+        } catch {}
+      }
+
+      const chaveRecebedor = chavePix;
+
+      document.getElementById('valor-pix').textContent = `R$ ${Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('data-hora-pix').textContent = dataHora;
+      document.getElementById('chave-pix').textContent = chavePix;
+
+      document.getElementById('nome-remetente').textContent = nomeRemetente;
+      document.getElementById('banco-remetente').textContent = bancoRemetente;
+
+      document.getElementById('nome-recebedor').textContent = nomeRecebedor;
+      document.getElementById('banco-recebedor').textContent = bancoRecebedor;
+      document.getElementById('chave-recebedor').textContent = chaveRecebedor;
+    }
+
+    window.onload = preencherComprovante;
+
+    function voltar() {
+      // Limpa os dados do Pix ao voltar para home
+      localStorage.removeItem('chavePix');
+      localStorage.removeItem('valorPix');
+      localStorage.removeItem('dataHoraPix');
+      window.location.href = "home.html";
+    }
+
+    function compartilhar() {
+      const valor = document.getElementById('valor-pix').textContent;
+      const dataHora = document.getElementById('data-hora-pix').textContent;
+      const nomeRemetente = document.getElementById('nome-remetente').textContent;
+      const nomeRecebedor = document.getElementById('nome-recebedor').textContent;
+      const chavePix = document.getElementById('chave-pix').textContent;
+
+      const conteudo = `
+Comprovante Pix:
+Valor: ${valor}
+Data e Hora: ${dataHora}
+Remetente: ${nomeRemetente}
+Recebedor: ${nomeRecebedor}
+Chave: ${chavePix}
+`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'Comprovante Pix',
+          text: conteudo,
+        }).catch((err) => console.error('Erro ao compartilhar:', err));
+      } else {
+        alert('Compartilhamento não suportado neste dispositivo.');
+      }
+    }
+  </script>
+</body>
+
+</html>
+<!--
+Pagina HTML para exibir um comprovante de pagamento via pix.
+Inclue informações sobre o pagemento, como valor, data, hora e dados do recebedor.-->

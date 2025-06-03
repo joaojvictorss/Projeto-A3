@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bradesco Home - Projeto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-top">
+        <span class="logo">Bradesco</span>
+        <div class="header-icons">
+          <span class="icon-bell">
+            <span class="badge">23</span>
+            <img src="https://img.icons8.com/sf-regular/48/ffffff/appointment-reminders.png" alt="Notificações" />
+          </span>
+        </div>
+      </div>
+      <div class="header-user">
+        <span id="user-nome">Olá, Usuário</span>
+        <span class="logout">Sair</span>
+      </div>
+      <div class="saldo-area">
+        <button id="btn-saldo" class="saldo-btn">
+          Meu saldo
+          <img src="https://img.icons8.com/ios-filled/18/ffffff/visible--v1.png" id="img-eye" class="eye" alt="Exibir/ocultar saldo"/>
+        </button>
+        <div class="saldo-valor" id="saldo-valor"></div>
+      </div>
+      <div class="menu-row">
+        <div class="menu-item">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8QgX8OWdRGyKSBnarlGDinFpSC_GKJQPfNw&s" alt="Extrato"/>
+          <span>Extrato</span>
+        </div>
+        <div class="menu-item">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR3RFItX027yByag1hjT43ZvNIRTB51LiPjOA&s" alt="Open Finance"/>
+          <span>Open Finance</span>
+        </div>
+        <div class="menu-item">
+          <img src="https://img.icons8.com/ios-filled/32/ffffff/bank.png" alt="Meus Bancos"/>
+          <span>Meus bancos</span>
+        </div>
+        <div class="menu-item">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRo0Mh7_k_CENTEYEpaev_-6uIPmGGnsw_ryQ&s" alt="Trazer Dados"/>
+          <span>Trazer dados</span>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="favoritos">
+        <h2>Favoritos</h2>
+        <div class="fav-grid">
+          <div class="fav-item" id="fav-pix" tabindex="0">
+            <img class="fav-icon" src="https://i.ibb.co/0Vz336Rg/icons8-foto-34.png" alt="Pix"/>
+            <span class="fav-label">Pix</span>
+          </div>
+          <div class="fav-item" id="fav-transfer" tabindex="0">
+            <img class="fav-icon" src="https://img.icons8.com/ios-filled/34/e70033/money-transfer.png" alt="Transferências"/>
+            <span class="fav-label">Transferências</span>
+          </div>
+          <div class="fav-item" id="fav-pagamentos" tabindex="0">
+            <img class="fav-icon" src="https://img.icons8.com/ios-filled/34/e70033/bill.png" alt="Pagamentos"/>
+            <span class="fav-label">Pagamentos</span>
+          </div>
+          <div class="fav-item" id="fav-cartoes" tabindex="0">
+            <img class="fav-icon" src="https://img.icons8.com/ios-filled/34/e70033/bank-cards.png" alt="Cartões"/>
+            <span class="fav-label">Cartões</span>
+          </div>
+          <div class="fav-item" id="fav-emprestimos" tabindex="0">
+            <img class="fav-icon" src="https://img.icons8.com/ios-filled/34/e70033/money-bag.png" alt="Empréstimos"/>
+            <span class="fav-label">Empréstimos</span>
+          </div>
+          <div class="fav-item" id="fav-investimentos" tabindex="0">
+            <img class="fav-icon" src="https://img.icons8.com/ios-filled/34/e70033/combo-chart.png" alt="Investimentos"/>
+            <span class="fav-label">Investimentos</span>
+          </div>
+          <div class="fav-item" id="fav-recargas" tabindex="0">
+            <img class="fav-icon" src="https://img.icons8.com/ios-filled/34/e70033/iphone-x.png" alt="Recargas"/>
+            <span class="fav-label">Recargas</span>
+          </div>
+          <div class="fav-item" id="fav-personalizar" tabindex="0">
+            <img class="fav-icon" src="https://img.icons8.com/ios-filled/34/e70033/settings.png" alt="Personalizar"/>
+            <span class="fav-label">Personalizar</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <div class="footer-menu">
+        <div class="footer-item active">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/home.png" alt="Home"/>
+          <span>Home</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/robot-3.png" alt="BIA"/>
+          <span>BIA</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/shop.png" alt="Shop"/>
+          <span>Shop</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/user-male-circle.png" alt="Perfil"/>
+          <span>Perfil</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/menu.png" alt="Menu"/>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    // Exibe nome e saldo do usuário logado (com saldo atualizado do backend)
+    (async function() {
+      const userData = localStorage.getItem('usuarioLogado');
+      let nome = 'Usuário';
+      let saldo = '';
+      let email = localStorage.getItem('emailUsuario');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          nome = user.nome || nome;
+          saldo = typeof user.saldo === 'number'
+            ? user.saldo
+            : (parseFloat(user.saldo) || '');
+        } catch {}
+      }
+      // Busca saldo atualizado do backend se email disponível
+      if (email) {
+        try {
+          const resp = await fetch(`http://localhost:8080/pix/conta/por-email?email=${encodeURIComponent(email)}`);
+          if (resp.ok) {
+            const conta = await resp.json();
+            saldo = conta.saldo;
+            // Atualiza localStorage para refletir saldo atualizado
+            let user = {};
+            try { user = JSON.parse(localStorage.getItem('usuarioLogado') || '{}'); } catch {}
+            user.saldo = saldo;
+            localStorage.setItem('usuarioLogado', JSON.stringify(user));
+          }
+        } catch {}
+      }
+      document.getElementById('user-nome').textContent = 'Olá, ' + nome;
+      // O saldo pode ser ocultado pelo botão, então só define o valor inicial
+      const saldoEl = document.getElementById('saldo-valor');
+      if (saldoEl) {
+        saldoEl.textContent = saldo !== '' ? 
+          'R$ ' + Number(saldo).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
+      }
+    })();
+  </script>
+</body>
+</html>

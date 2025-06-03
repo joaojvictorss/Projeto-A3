@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Valor do Pix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="valor.css">
+</head>
+<body>
+    <div class="app-container" style="background:rgba(0,0,0,0.04);">
+        <div class="pix-modal">
+            <h2>Valor do Pix</h2>
+            <hr class="pix-divider"/>
+            <form id="form-valor-pix" autocomplete="off">
+                <label for="valor-pix" class="pix-label">Informe o valor <span style="color:#e70033">*</span></label>
+                <div class="pix-input-group">
+                    <span class="pix-cifrao">R$</span>
+                    <input type="text" min="0,01" step="0,01" id="valor-pix" class="pix-input" placeholder="0,00" required inputmode="decimal" pattern="^\d+(,\d{0,2})?$">
+                </div>
+                <div class="pix-btns">
+                    <button type="button" class="pix-btn-cancelar" onclick="window.location.href='inserir.html'">Cancelar</button>
+                    <button type="submit" class="pix-btn-continuar">Continuar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+      const valorInput = document.getElementById('valor-pix');
+      if (valorInput) {
+        // Permite apenas números e vírgula, troca ponto por vírgula automaticamente
+        valorInput.addEventListener('input', function(e) {
+          let v = this.value;
+          // Troca ponto por vírgula
+          v = v.replace(/\./g, ',');
+          // Remove tudo que não for número ou vírgula
+          v = v.replace(/[^0-9,]/g, '');
+          // Só permite uma vírgula
+          const parts = v.split(',');
+          if (parts.length > 2) {
+            v = parts[0] + ',' + parts.slice(1).join('');
+          }
+          this.value = v;
+        });
+
+        // Formata para padrão brasileiro ao sair do campo
+        valorInput.addEventListener('blur', function() {
+          let v = this.value.replace(/\./g, ',');
+          if (v && !v.includes(',')) {
+            v += ',00';
+          } else if (v) {
+            // Garante duas casas decimais
+            let [inteiro, decimal] = v.split(',');
+            decimal = (decimal || '').padEnd(2, '0').slice(0,2);
+            v = inteiro + ',' + decimal;
+          }
+          this.value = v;
+        });
+      }
+
+      const formValorPix = document.getElementById('form-valor-pix');
+      if (formValorPix) {
+        formValorPix.addEventListener('submit', function(e) {
+          e.preventDefault();
+          let valor = valorInput.value.replace(/\./g, '').replace(',', '.');
+          if (!valor || isNaN(Number(valor)) || Number(valor) <= 0) {
+            alert("Digite um valor válido para o Pix.");
+            valorInput.focus();
+            return;
+          }
+          // Salva o valor e a data/hora do Pix
+          localStorage.setItem('valorPix', valor);
+          localStorage.setItem('dataHoraPix', new Date().toLocaleString('pt-BR'));
+          window.location.href = "confirmacao.html";
+        });
+      }
+    </script>
+</body>
+</html>

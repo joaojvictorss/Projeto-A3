@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmação do Pix</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-top">
+        <span class="logo">Bradesco</span>
+      </div>
+      <div class="header-user">
+        <span id="user-nome">Olá, Usuário</span>
+        <span class="logout">Sair</span>
+      </div>
+    </header>
+    <main>
+      <section class="pix-area">
+        <h2 style="color:#e70033;font-weight:700;">Confirmação do Pix</h2>
+        <hr class="pix-divider" />
+        <div id="pix-confirmacao-info" style="margin-bottom:24px;">
+          <!-- Informações do Pix preenchidas via JS -->
+        </div>
+        <div class="pix-btns">
+          <button type="button" class="pix-btn-cancelar" onclick="window.location.href='valor.html'">Voltar</button>
+          <button type="button" class="pix-btn-continuar" id="btn-confirmar-pix">Confirmar</button>
+        </div>
+      </section>
+    </main>
+    <footer class="app-footer">
+      <div class="footer-menu">
+        <div class="footer-item">
+          <a href="home.html">
+            <img src="https://img.icons8.com/ios-filled/24/e70033/home.png" alt="Home" />
+            <span>Home</span>
+          </a>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/robot-3.png" alt="BIA" />
+          <span>BIA</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/shop.png" alt="Shop" />
+          <span>Shop</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/user-male-circle.png" alt="Perfil" />
+          <span>Perfil</span>
+        </div>
+        <div class="footer-item active">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/menu.png" alt="Menu" />
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script>
+    // Exibe nome do usuário logado
+    (function() {
+      const userData = localStorage.getItem('usuarioLogado');
+      let nome = 'Usuário';
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          nome = user.nome || nome;
+        } catch {}
+      }
+      document.getElementById('user-nome').textContent = 'Olá, ' + nome;
+    })();
+
+    // Exibe informações do Pix usando localStorage
+    const chave = localStorage.getItem('chavePix') || '';
+    const valor = localStorage.getItem('valorPix') || '';
+    document.getElementById('pix-confirmacao-info').innerHTML = `
+        <p><strong>Chave Pix destino:</strong> ${chave}</p>
+        <p><strong>Valor:</strong> R$ ${Number(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+      `;
+
+    document.getElementById('btn-confirmar-pix').onclick = async function () {
+      // Busca dados necessários
+      const userData = localStorage.getItem('usuarioLogado');
+      const chavePix = localStorage.getItem('chavePix');
+      const valorPix = localStorage.getItem('valorPix');
+      if (!userData || !chavePix || !valorPix) {
+        alert("Dados insuficientes para realizar o Pix.");
+        return;
+      }
+      let contaOrigemId = null;
+      try {
+        const user = JSON.parse(userData);
+        contaOrigemId = user.contaId || user.conta_id || user.idConta || user.id || user.contaId;
+        // Se não veio o id da conta no login, busque pelo backend
+        if (!contaOrigemId && user.nome && user.saldo !== undefined) {
+          // Buscar conta pelo email salvo no localStorage
+          const email = localStorage.getItem('emailUsuario');
+          if (email) {
+            const resp = await fetch(`http://localhost:8080/conta/por-email?email=${encodeURIComponent(email)}`);
+            if (resp.ok) {
+              const conta = await resp.json();
+              contaOrigemId = conta.contaId || conta.id || conta.conta_id;
+            }
+          }
+        }
+      } catch {}
+      if (!contaOrigemId) {
+        alert("Não foi possível identificar sua conta para transferir.");
+        return;
+      }
+
+      // Buscar conta destino pelo email/chave Pix
+      let contaDestinoId = null;
+      try {
+        const resp = await fetch(`http://localhost:8080/pix/conta/por-chave?chave=${encodeURIComponent(chavePix)}`);
+        if (resp.ok) {
+          const conta = await resp.json();
+          contaDestinoId = conta.contaId || conta.id || conta.conta_id;
+        }
+      } catch {}
+      if (!contaDestinoId) {
+        alert("Não foi possível identificar a conta de destino para a chave: " + chavePix);
+        return;
+      }
+
+      // Chama o endpoint de transferência Pix
+      try {
+        const resp = await fetch(`http://localhost:8080/pix/transferir?contaOrigem=${contaOrigemId}&contaDestino=${contaDestinoId}&valor=${encodeURIComponent(valorPix)}`, {
+          method: "POST"
+        });
+        if (resp.ok) {
+          window.location.href = "comprovante.html";
+        } else {
+          const msg = await resp.text();
+          alert("Erro ao transferir Pix: " + msg);
+        }
+      } catch (e) {
+        alert("Erro ao transferir Pix.");
+      }
+    };
+  </script>
+</body>
+
+</html>

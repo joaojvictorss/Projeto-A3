@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Enviar Pix - Bradesco</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-top">
+                <span class="logo">Bradesco</span>
+            </div>
+            <div class="header-user">
+                <span id="user-nome">Olá, Usuário</span>
+                <span class="logout">Sair</span>
+            </div>
+            <div class="saldo-area" style="padding-bottom:0;">
+                <div class="saldo-valor" id="user-saldo" style="background:#fff;color:#e70033;display:inline-block;border-radius:10px;padding:6px 28px;font-size:1.15rem;font-weight:bold;letter-spacing:1px;box-shadow:0 1px 6px rgba(231,0,51,0.08);margin-bottom:4px;min-width:140px;">
+                    <!-- Saldo será preenchido via JS -->
+                </div>
+            </div>
+        </header>
+        <main>
+            <section class="pix-area">
+                <h2>Enviar Pix para</h2>
+                <form id="form-chave-pix" autocomplete="off">
+                    <label for="chave-pix" style="color:#444;font-weight:600;">Digite chave ou nome do contato:</label>
+                    <input type="text" id="chave-pix" placeholder="CPF, Telefone, Email ou Aleatória" style="width:100%;margin:12px 0 20px 0;padding:12px 14px;border-radius:10px;border:1.5px solid #e0e0e0;font-size:1rem;" required>
+                    <div class="pix-btns" style="margin-bottom:18px;">
+                        <button type="submit" class="pix-btn-continuar">Próximo</button>
+                    </div>
+                </form>
+                <div style="color:#888;font-size:0.95rem;margin-bottom:18px;">Sugestões:</div>
+                <div style="display:flex;gap:18px;flex-wrap:wrap;">
+                    <div style="background:#f7f7f7;border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;width:60px;">
+                        <div style="background:#e70033;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1rem;margin-bottom:4px;">VF</div>
+                        <span style="font-size:0.8rem;color:#444;text-align:center;">Viviane Farias</span>
+                    </div>
+                    <div style="background:#f7f7f7;border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;width:60px;">
+                        <div style="background:#e70033;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1rem;margin-bottom:4px;">TM</div>
+                        <span style="font-size:0.8rem;color:#444;text-align:center;">Tadeu Mello</span>
+                    </div>
+                    <div style="background:#f7f7f7;border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;width:60px;">
+                        <div style="background:#e70033;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1rem;margin-bottom:4px;">AM</div>
+                        <span style="font-size:0.8rem;color:#444;text-align:center;">Amanda Moraes</span>
+                    </div>
+                    <div style="background:#f7f7f7;border-radius:12px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;width:60px;">
+                        <div style="background:#e70033;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:1.1rem;margin-bottom:4px;">CH</div>
+                        <span style="font-size:0.8rem;color:#444;text-align:center;">Cadu Henrique</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <footer class="app-footer">
+            <div class="footer-menu">
+                <div class="footer-item">
+                    <a href="home.html">
+                        <img src="https://img.icons8.com/ios-filled/24/e70033/home.png" alt="Home" />
+                        <span>Home</span>
+                    </a>
+                </div>
+                <div class="footer-item">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/robot-3.png" alt="BIA" />
+                    <span>BIA</span>
+                </div>
+                <div class="footer-item">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/shop.png" alt="Shop" />
+                    <span>Shop</span>
+                </div>
+                <div class="footer-item">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/user-male-circle.png" alt="Perfil" />
+                    <span>Perfil</span>
+                </div>
+                <div class="footer-item active">
+                    <img src="https://img.icons8.com/ios-filled/24/e70033/menu.png" alt="Menu" />
+                </div>
+            </div>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+    <script>
+      // Exibe nome e saldo do usuário logado
+      (function() {
+        // Recupera dados do usuário do localStorage
+        const userData = localStorage.getItem('usuarioLogado');
+        let nome = 'Usuário';
+        let saldo = '';
+        if (userData) {
+          try {
+            const user = JSON.parse(userData);
+            nome = user.nome || nome;
+            saldo = typeof user.saldo === 'number'
+              ? user.saldo
+              : (parseFloat(user.saldo) || '');
+          } catch {}
+        }
+        document.getElementById('user-nome').textContent = 'Olá, ' + nome;
+        document.getElementById('user-saldo').textContent = saldo !== '' ? 
+          'R$ ' + Number(saldo).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
+      })();
+
+      // Lógica para o botão "Próximo" do formulário de chave Pix
+      document.getElementById('form-chave-pix').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const chave = document.getElementById('chave-pix').value.trim();
+        if (!chave) {
+          alert("Digite uma chave Pix.");
+          return;
+        }
+        // Verifica se está tentando enviar para si mesmo
+        const emailUsuario = localStorage.getItem('emailUsuario');
+        if (emailUsuario && chave.toLowerCase() === emailUsuario.toLowerCase()) {
+          alert("Você não pode enviar um Pix para você mesmo.");
+          return;
+        }
+        try {
+          const resp = await fetch(`http://localhost:8080/pix/verificar-chave?chave=${encodeURIComponent(chave)}`);
+          if (resp.status === 404) {
+            alert("Chave Pix não encontrada.");
+            return;
+          }
+          const suspeito = await resp.json();
+          if (suspeito === null) {
+            alert("Chave Pix não encontrada.");
+            return;
+          }
+          if (suspeito) {
+            // Pergunta ao usuário se deseja prosseguir
+            const continuar = confirm("Atenção: Esta chave Pix está marcada como suspeita. Deseja continuar mesmo assim?");
+            if (continuar) {
+              localStorage.setItem('chavePix', chave);
+              window.location.href = "valor.html";
+            }
+            // Se não quiser continuar, não faz nada
+          } else {
+            localStorage.setItem('chavePix', chave);
+            window.location.href = "valor.html";
+          }
+        } catch (e) {
+          alert("Erro ao verificar chave Pix.");
+        }
+      });
+    </script>
+</body>
+</html>
