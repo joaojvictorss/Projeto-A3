@@ -204,10 +204,9 @@ if (bell) {
 const logoutBtn = document.querySelector('.logout');
 if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
-    window.close();
-    setTimeout(() => {
-      window.location.href = "https://www.bradesco.com.br";
-    }, 200);
+    // Limpa dados do usuário e volta para login
+    localStorage.clear();
+    window.location.href = "index.html";
   });
 }
 
