@@ -53,7 +53,6 @@ if (loginForm) {
           saldo: conta.saldo,
           contaId: conta.contaId // <-- Adicione esta linha
         }));
-        alert("Login bem-sucedido!");
         window.location.href = "home.html";
       } else {
         const error = await response.text();
@@ -167,12 +166,23 @@ if (footerItems.length > 0) {
 }
 
 // Menu superior: alerta em itens específicos
-const menuLabels = ["Extrato", "Open Finance", "Meus bancos", "Trazer dados"];
+const menuLabels = ["Open Finance", "Meus bancos", "Trazer dados"];
 const menuItems = document.querySelectorAll('.menu-item');
 if (menuItems.length > 0) {
   menuItems.forEach(item => {
     const label = item.querySelector('span')?.textContent?.trim();
-    if (menuLabels.includes(label)) {
+    if (label === "Extrato") {
+      // Redireciona para extrato.html
+      item.addEventListener('click', () => {
+        window.location.href = "extrato.html";
+      });
+      item.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          item.click();
+        }
+      });
+      item.setAttribute('tabindex', '0');
+    } else if (menuLabels.includes(label)) {
       item.addEventListener('click', () => {
         alert("Em breve terá novas funções!");
       });
@@ -206,9 +216,45 @@ if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
     // Limpa dados do usuário e volta para login
     localStorage.clear();
-    window.location.href = "index.html";
+    // Impede voltar para páginas protegidas
+    window.location.replace("index.html");
   });
 }
+
+// Proteção de sessão: redireciona para login se não estiver logado
+(function() {
+  // Lista de páginas que não exigem login
+  const publicPages = [
+    'index.html',
+    '/index.html',
+    '',
+    '/',
+  ];
+  const path = window.location.pathname.split('/').pop();
+  // Só faz a proteção se NÃO estiver em index.html
+  if (!publicPages.includes(path)) {
+    if (!localStorage.getItem('usuarioLogado')) {
+      window.location.replace('index.html');
+    }
+  }
+})();
+
+// Impede voltar para páginas protegidas após logout/fechar navegador
+window.addEventListener('pageshow', function(event) {
+  // Só faz a proteção se NÃO estiver em index.html
+  const publicPages = [
+    'index.html',
+    '/index.html',
+    '',
+    '/',
+  ];
+  const path = window.location.pathname.split('/').pop();
+  if (!publicPages.includes(path)) {
+    if (!localStorage.getItem('usuarioLogado')) {
+      window.location.replace('index.html');
+    }
+  }
+});
 
 // Pix: redirecionar ao clicar em Transferir
 const pixTransferir = document.getElementById('pix-transferir');

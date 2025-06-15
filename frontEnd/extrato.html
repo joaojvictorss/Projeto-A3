@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Extrato - Bradesco</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Ajustes para tabela de extrato caber na tela */
+    #extrato-lista {
+      overflow-x: auto;
+      width: 100%;
+    }
+    .extrato-tabela {
+      width: 100%;
+      min-width: 520px;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    .extrato-tabela th, .extrato-tabela td {
+      padding: 4px 3px;
+      text-align: left;
+      font-size: 0.92rem;
+      vertical-align: top;
+    }
+    .extrato-tabela th {
+      background: #f7f7f7;
+      font-weight: 600;
+    }
+    .extrato-tabela td {
+      border-bottom: 1px solid #eee;
+      /* Remove max-width for data, pessoa, email to allow full display */
+    }
+    .extrato-tabela .extrato-data {
+      min-width: 120px;
+      max-width: 180px;
+      white-space: normal;
+      word-break: break-all;
+    }
+    .extrato-tabela .extrato-pessoa,
+    .extrato-tabela .extrato-email {
+      min-width: 90px;
+      max-width: 200px;
+      white-space: normal;
+      word-break: break-all;
+      font-size: 0.90rem;
+    }
+    .extrato-tabela .extrato-valor {
+      text-align: right;
+      font-weight: 600;
+      min-width: 80px;
+      max-width: 100px;
+      white-space: nowrap;
+      padding-right: 18px; /* ADICIONADO: espaço extra à direita */
+    }
+    @media (max-width: 500px) {
+      .extrato-tabela th, .extrato-tabela td {
+        font-size: 0.85rem;
+        padding: 3px 2px;
+      }
+      .extrato-tabela .extrato-data {
+        min-width: 90px;
+        max-width: 120px;
+      }
+      .extrato-tabela .extrato-pessoa,
+      .extrato-tabela .extrato-email {
+        min-width: 60px;
+        max-width: 120px;
+      }
+      .extrato-tabela .extrato-valor {
+        min-width: 60px;
+        max-width: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="header-top">
+        <span class="logo">Bradesco</span>
+        <div class="header-icons">
+          <span class="icon-bell">
+            <span class="badge">23</span>
+            <img src="https://img.icons8.com/sf-regular/48/ffffff/appointment-reminders.png" alt="Notificações" />
+          </span>
+        </div>
+      </div>
+      <div class="header-user">
+        <span id="user-nome">Olá, Usuário</span>
+        <span class="logout">Sair</span>
+      </div>
+      <div class="saldo-area">
+        <button id="btn-saldo" class="saldo-btn">
+          Meu saldo
+          <img src="https://img.icons8.com/ios-filled/18/ffffff/visible--v1.png" id="img-eye" class="eye" alt="Exibir/ocultar saldo"/>
+        </button>
+        <div class="saldo-valor" id="saldo-valor"></div>
+      </div>
+    </header>
+    <main>
+      <section class="pix-area">
+        <h2>Extrato</h2>
+        <div id="extrato-lista" style="margin-top:12px;">
+          <div style="color:#888;text-align:center;" id="extrato-carregando">Carregando extrato...</div>
+        </div>
+      </section>
+    </main>
+    <footer class="app-footer">
+      <div class="footer-menu">
+        <div class="footer-item" onclick="window.location.href='home.html'" tabindex="0">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/home.png" alt="Home"/>
+          <span>Home</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/robot-3.png" alt="BIA"/>
+          <span>BIA</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/shop.png" alt="Shop"/>
+          <span>Shop</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/user-male-circle.png" alt="Perfil"/>
+          <span>Perfil</span>
+        </div>
+        <div class="footer-item">
+          <img src="https://img.icons8.com/ios-filled/24/e70033/menu.png" alt="Menu"/>
+        </div>
+      </div>
+    </footer>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    // Exibe nome e saldo do usuário logado
+    (function() {
+      const userData = localStorage.getItem('usuarioLogado');
+      let nome = 'Usuário';
+      let saldo = '';
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          nome = user.nome || nome;
+          saldo = typeof user.saldo === 'number'
+            ? user.saldo
+            : (parseFloat(user.saldo) || '');
+        } catch {}
+      }
+      document.getElementById('user-nome').textContent = 'Olá, ' + nome;
+      const saldoEl = document.getElementById('saldo-valor');
+      if (saldoEl) {
+        saldoEl.textContent = saldo !== '' ?
+          'R$ ' + Number(saldo).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}) : '';
+      }
+    })();
+
+    // Carrega extrato Pix do usuário logado
+    async function carregarExtrato() {
+      const userData = localStorage.getItem('usuarioLogado');
+      if (!userData) {
+        document.getElementById('extrato-lista').innerHTML = '<div style="color:#e70033;text-align:center;">Usuário não logado.</div>';
+        return;
+      }
+      let contaId = null;
+      try {
+        const user = JSON.parse(userData);
+        contaId = user.contaId || user.conta_id || user.idConta || user.id;
+      } catch {}
+      if (!contaId) {
+        document.getElementById('extrato-lista').innerHTML = '<div style="color:#e70033;text-align:center;">Conta não encontrada.</div>';
+        return;
+      }
+      contaId = Number(contaId);
+      try {
+        const resp = await fetch(`http://localhost:8080/pix/extrato/${contaId}`);
+        if (!resp.ok) {
+          document.getElementById('extrato-lista').innerHTML = '<div style="color:#e70033;text-align:center;">Erro ao buscar extrato.</div>';
+          return;
+        }
+        const transacoes = await resp.json();
+        if (!Array.isArray(transacoes) || transacoes.length === 0) {
+          document.getElementById('extrato-lista').innerHTML = '<div style="color:#888;text-align:center;">Nenhuma transação encontrada.</div>';
+          return;
+        }
+        let html = `
+        <table class="extrato-tabela">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th class="extrato-valor">Valor</th>
+              <th>Pessoa</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody id="extrato-tbody">`;
+        transacoes.sort((a, b) => new Date(b.dataTransacao) - new Date(a.dataTransacao));
+        for (const t of transacoes) {
+          const origemId = Number(t.contaOrigem);
+          const destinoId = Number(t.contaDestino);
+          const data = t.dataTransacao
+            ? new Date(t.dataTransacao).toLocaleDateString('pt-BR') + ' ' + new Date(t.dataTransacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit', second:'2-digit'})
+            : '';
+          const tipo = t.tipo ? t.tipo.charAt(0).toUpperCase() + t.tipo.slice(1) : '';
+          const valor = (origemId === contaId)
+            ? `- R$ ${Number(t.valor).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+            : `+ R$ ${Number(t.valor).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+          const cor = (origemId === contaId) ? '#e70033' : '#44e060';
+          html += `<tr>
+            <td class="extrato-data" title="${t.dataTransacao ? new Date(t.dataTransacao).toLocaleString('pt-BR') : ''}">${data}</td>
+            <td>${tipo}</td>
+            <td class="extrato-valor" style="color:${cor};">${valor}</td>
+            <td class="extrato-pessoa" data-pessoa="${origemId === contaId ? destinoId : origemId}" data-tipo="${origemId === contaId ? 'destino' : 'origem'}" title="Carregando...">...</td>
+            <td class="extrato-email" data-email="${origemId === contaId ? destinoId : origemId}" data-tipo="${origemId === contaId ? 'destino' : 'origem'}" title="Carregando...">...</td>
+          </tr>`;
+        }
+        html += '</tbody></table>';
+        document.getElementById('extrato-lista').innerHTML = html;
+
+        // Busca nome/email das pessoas envolvidas
+        const linhas = document.querySelectorAll('#extrato-tbody tr');
+        for (let i = 0; i < transacoes.length; i++) {
+          const t = transacoes[i];
+          const origemId = Number(t.contaOrigem);
+          const destinoId = Number(t.contaDestino);
+          const outraContaId = origemId === contaId ? destinoId : origemId;
+          if (!outraContaId) {
+            linhas[i].children[3].textContent = '-';
+            linhas[i].children[3].title = '-';
+            linhas[i].children[4].textContent = '-';
+            linhas[i].children[4].title = '-';
+            continue;
+          }
+          try {
+            const resp = await fetch(`http://localhost:8080/pix/conta/${outraContaId}`);
+            if (resp.ok) {
+              const conta = await resp.json();
+              linhas[i].children[3].textContent = conta.usuario?.nome || '-';
+              linhas[i].children[3].title = conta.usuario?.nome || '-';
+              linhas[i].children[4].textContent = conta.usuario?.email || '-';
+              linhas[i].children[4].title = conta.usuario?.email || '-';
+            } else {
+              linhas[i].children[3].textContent = '-';
+              linhas[i].children[3].title = '-';
+              linhas[i].children[4].textContent = '-';
+              linhas[i].children[4].title = '-';
+            }
+          } catch {
+            linhas[i].children[3].textContent = '-';
+            linhas[i].children[3].title = '-';
+            linhas[i].children[4].textContent = '-';
+            linhas[i].children[4].title = '-';
+          }
+        }
+      } catch (e) {
+        document.getElementById('extrato-lista').innerHTML = '<div style="color:#e70033;text-align:center;">Erro ao buscar extrato.</div>';
+      }
+    }
+    carregarExtrato();
+  </script>
+</body>
+</html>

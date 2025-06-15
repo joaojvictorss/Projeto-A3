@@ -89,4 +89,12 @@ public class PixController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // Endpoint auxiliar: buscar conta por id (para extrato)
+    @GetMapping("/conta/{contaId}")
+    public ResponseEntity<Conta> getContaPorId(@PathVariable Long contaId) {
+        return contaRepository.findById(contaId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 }
