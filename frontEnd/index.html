@@ -15,13 +15,46 @@
       <h1 class="login-title">Acesse sua conta</h1>
       <form id="loginForm" action="#" method="post" class="login-form">
         <input type="text" name="email" placeholder="E-mail" required />
-        <input type="password" name="senha" placeholder="Senha" required />
+       <!-- Substitua o campo de senha existente por este bloco -->
+<div style="position: relative; display: inline-block; width: 100%;">
+  <input type="password" id="senha" name="senha" placeholder="Senha" style="padding-right: 35px; width: 100%;">
+  <span id="toggleSenha" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <!-- Ícone de olho aberto -->
+    <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24">
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="#333" stroke-width="2"/>
+      <circle cx="12" cy="12" r="3" stroke="#333" stroke-width="2"/>
+    </svg>
+    <!-- Ícone de olho fechado (escondido por padrão) -->
+    <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" style="display:none;">
+      <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" stroke="#333" stroke-width="2"/>
+      <path d="M4 4l16 16" stroke="#333" stroke-width="2"/>
+    </svg>
+  </span>
+</div>
         <button type="submit">Entrar</button>
         <a href="#" class="login-link">Esqueci minha senha</a>
       </form>
     </div>
   </div>
   <script src="script.js"></script>
+  <script>
+  const senhaInput = document.getElementById('senha');
+  const toggleSenha = document.getElementById('toggleSenha');
+  const eyeOpen = document.getElementById('eyeOpen');
+  const eyeClosed = document.getElementById('eyeClosed');
+
+  toggleSenha.addEventListener('click', function() {
+    if (senhaInput.type === 'password') {
+      senhaInput.type = 'text';
+      eyeOpen.style.display = 'none';
+      eyeClosed.style.display = 'inline';
+    } else {
+      senhaInput.type = 'password';
+      eyeOpen.style.display = 'inline';
+      eyeClosed.style.display = 'none';
+    }
+  });
+</script>
 </body>
 
 </html>

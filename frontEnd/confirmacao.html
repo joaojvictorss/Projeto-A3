@@ -139,6 +139,15 @@
       }
     };
   </script>
+    // ...existing code...
+  <script>
+   
+    document.querySelector('.logout')?.addEventListener('click', function() {
+      localStorage.clear();
+      window.location.replace('index.html');
+    });
+  </script>
+
 </body>
 
 </html>
